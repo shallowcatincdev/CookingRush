@@ -92,6 +92,7 @@ public class Pickup : MonoBehaviour
             if(type == 13)
             {
                 dropoffItems[1].GetComponent<Burger>().OnPan(false);
+                dropoff.DropCode(1);
             }
 
 

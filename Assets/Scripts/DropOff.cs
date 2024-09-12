@@ -24,6 +24,11 @@ public class DropOff : MonoBehaviour
         
     }
 
+    public void DropCode(int Code)
+    {
+        dropCode = Code;
+    }
+
     public bool DropOffCheck(int[] codes)
     {
         foreach (int code in codes)
@@ -64,7 +69,7 @@ public class DropOff : MonoBehaviour
 
         obj.transform.position = transform.position;
 
-        if (type == 13 && dropCode == 12)
+        if (type == 1 && dropCode == 12)
         {
             if (obj.name == "PanPrefab(Clone)")
             {
@@ -83,6 +88,11 @@ public class DropOff : MonoBehaviour
         {
             dropCode = 3;
             obj.GetComponent<Burger>().OnPan(true);
+        }
+
+        if (type == 11 && dropCode == 12)
+        {
+            dropCode = 22;
         }
 
         if (type == 12)

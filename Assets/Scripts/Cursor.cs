@@ -10,6 +10,10 @@ public class Cursor : MonoBehaviour
 {
     PlayerInput playerInput;
     [SerializeField] Camera cam;
+
+    [SerializeField] GameObject check;
+    [SerializeField] GameObject x;
+
     Vector2 mousePos;
     Vector3 mouse;
 
@@ -25,13 +29,7 @@ public class Cursor : MonoBehaviour
 
     int type;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         mousePos = cam.ScreenToWorldPoint(mouse);
@@ -60,10 +58,21 @@ public class Cursor : MonoBehaviour
             pickUpHover = collision.gameObject.GetComponent<Pickup>();
         }
 
-        if (collision.tag == "DropOff")
+        if (collision.tag == "DropOff" && hasPickup)
         {
             dropOffHover = collision.gameObject.GetComponent<DropOff>();
+
+            if (dropOffHover.DropOffCheck(validDrops))
+            {
+                check.SetActive(true);
+            }
+            else
+            {
+                x.SetActive(true);
+            }
         }
+
+
     }
 
     private void OnTriggerExit2D(Collider2D collision)
@@ -76,6 +85,8 @@ public class Cursor : MonoBehaviour
         if (collision.tag == "DropOff")
         {
             dropOffHover = null;
+            check.SetActive(false);
+            x.SetActive(false);
         }
     }
 
@@ -83,13 +94,11 @@ public class Cursor : MonoBehaviour
     {
         if (pickUpHover != null)
         {
-            Debug.Log("PICKUP NOT NULL");
             type = pickUpHover.PickupCheck();
             if (type > 0)
             {
                 hasPickup = true;
                 validDrops = pickUpHover.ValidDrop();
-                Debug.Log("PICKUP");
                 heldOrgin = pickUpHover;
                 heldObject = pickUpHover.SpawnObject();
             }
@@ -108,7 +117,6 @@ public class Cursor : MonoBehaviour
                     dropOffHover.Transfer(i, type);
                 }
                 
-                Debug.Log("DROPOff");
             }
             else
             {
@@ -155,6 +163,8 @@ public class Cursor : MonoBehaviour
         hasPickup = false;
         heldOrgin = null;
         type = 0;
+        check.SetActive(false);
+        x.SetActive(false);
     }
 
 }
