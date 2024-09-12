@@ -15,8 +15,12 @@ public class Cursor : MonoBehaviour
     Pickup pickUpHover;
     DropOff dropOffHover;
 
+    GameObject heldObject;
+
     int[] validDrops;
     bool hasPickup = false;
+
+    int type;
 
     // Start is called before the first frame update
     void Start()
@@ -31,6 +35,10 @@ public class Cursor : MonoBehaviour
         mousePos.x += 0.25f;
         mousePos.y -= 0.25f;
         transform.position = mousePos;
+        if (hasPickup)
+        {
+            heldObject.transform.position = mousePos;
+        }
     }
 
     public void OnMouse(InputValue value)
@@ -51,16 +59,32 @@ public class Cursor : MonoBehaviour
         }
     }
 
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.tag == "Pickup")
+        {
+            pickUpHover = null;
+        }
+
+        if (collision.tag == "DropOff")
+        {
+            dropOffHover = null;
+        }
+    }
+
     public void OnClickPress()
     {
         if (pickUpHover != null)
         {
             Debug.Log("PICKUP NOT NULL");
-            if (pickUpHover.PickupCheck())
+            type = pickUpHover.PickupCheck();
+            if (type > 0)
             {
                 hasPickup = true;
                 validDrops = pickUpHover.ValidDrop();
                 Debug.Log("PICKUP");
+
+                heldObject = pickUpHover.SpawnObject();
             }
         }
         
@@ -72,11 +96,22 @@ public class Cursor : MonoBehaviour
         {
             if (dropOffHover.DropOffCheck(validDrops))
             {
+                dropOffHover.Transfer(heldObject, type);
                 Debug.Log("DROPOff");
+            }
+            else
+            {
+                Destroy(heldObject);
             }
             
         }
+        
+        if (dropOffHover == null)
+        {
+            Destroy(heldObject);
+        }
         hasPickup = false;
+        type = 0;
     }
 
 }

@@ -5,10 +5,13 @@ using UnityEngine;
 public class Burger : MonoBehaviour
 {
     [SerializeField] GameObject[] stages;
-    [SerializeField] GameObject indicator;
+    [SerializeField] GameObject[] indicator;
     int currentStage;
     bool onPan;
 
+    int cookTime;
+
+    int indnum;
 
 
     void Start()
@@ -22,9 +25,38 @@ public class Burger : MonoBehaviour
     }
 
     
-    void Update()
+    void FixedUpdate()
     {
-        
+        if (onPan)
+        {
+            foreach (GameObject i in indicator)
+            {
+                i.SetActive(false);
+            }
+            cookTime++;
+            indicator[indnum].SetActive(true);
+
+            if (cookTime >= 700)
+            {
+                cookTime = 0;
+                UpStage();
+            }
+
+        }
+        else
+        {
+            foreach (GameObject i in indicator)
+            {
+                i.SetActive(false);
+            }
+        }
+
+
+    }
+
+    public void OnPan(bool value)
+    {
+        onPan = value;
     }
 
     void UpStage()
@@ -34,6 +66,36 @@ public class Burger : MonoBehaviour
             stages[currentStage].SetActive(false);
             currentStage++;
             stages[currentStage].SetActive(true);
+            if (onPan)
+            {
+                if (currentStage < 3)
+                {
+                    indnum = 0;
+                }
+                if (currentStage == 3)
+                {
+                    indnum = 1;
+                }
+                if (currentStage == 4)
+                {
+                    indnum = 2;
+                }
+                if (currentStage == 5)
+                {
+                    indnum = 3;
+                }
+                if (currentStage > 5)
+                {
+                    indnum = 4;
+                }
+
+                foreach (GameObject i in indicator)
+                {
+                    i.SetActive(false);
+                }
+
+                indicator[indnum].SetActive(true);
+            }
         }
         
     }
