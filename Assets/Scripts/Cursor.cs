@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -15,7 +16,9 @@ public class Cursor : MonoBehaviour
     Pickup pickUpHover;
     DropOff dropOffHover;
 
-    GameObject heldObject;
+    Pickup heldOrgin;
+
+    public GameObject[] heldObject;
 
     int[] validDrops;
     bool hasPickup = false;
@@ -37,7 +40,11 @@ public class Cursor : MonoBehaviour
         transform.position = mousePos;
         if (hasPickup)
         {
-            heldObject.transform.position = mousePos;
+            foreach (GameObject i in heldObject)
+            {
+                i.transform.position = mousePos;
+            }
+            
         }
     }
 
@@ -83,7 +90,7 @@ public class Cursor : MonoBehaviour
                 hasPickup = true;
                 validDrops = pickUpHover.ValidDrop();
                 Debug.Log("PICKUP");
-
+                heldOrgin = pickUpHover;
                 heldObject = pickUpHover.SpawnObject();
             }
         }
@@ -96,21 +103,57 @@ public class Cursor : MonoBehaviour
         {
             if (dropOffHover.DropOffCheck(validDrops))
             {
-                dropOffHover.Transfer(heldObject, type);
+                foreach (GameObject i in heldObject)
+                {
+                    dropOffHover.Transfer(i, type);
+                }
+                
                 Debug.Log("DROPOff");
             }
             else
             {
-                Destroy(heldObject);
+                if (!heldOrgin.CanReturn())
+                {
+                    foreach (GameObject i in heldObject)
+                    {
+                        Destroy(i);
+                    }
+                }
+                else
+                {
+                    DropOff drop = heldOrgin.getDropoff();
+                    foreach (GameObject i in heldObject)
+                    {
+                        drop.Transfer(i, 99);
+                    }
+                    
+                }
+                
             }
             
         }
         
-        if (dropOffHover == null)
+        if (dropOffHover == null && heldOrgin != null)
         {
-            Destroy(heldObject);
+            if (heldOrgin.CanReturn())
+            {
+                DropOff drop = heldOrgin.getDropoff();
+                foreach (GameObject i in heldObject)
+                {
+                    drop.Transfer(i, 99);
+                }
+            }
+            else
+            {
+                foreach (GameObject i in heldObject)
+                {
+                    Destroy(i);
+                }
+                
+            }
         }
         hasPickup = false;
+        heldOrgin = null;
         type = 0;
     }
 

@@ -1,10 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class DropOff : MonoBehaviour
 {
     [SerializeField] int dropCode;
+    [SerializeField] bool hasPickup;
+    [SerializeField] Pickup pickup;
+
+    GameObject[] dropedObjects;
+
 
     // Start is called before the first frame update
     void Start()
@@ -33,7 +39,39 @@ public class DropOff : MonoBehaviour
 
     public void Transfer(GameObject obj, int type)
     {
+        if (type == 99 || type == 13)
+        {
+            string objname = obj.name;
+
+            if (objname == "BunPrefab(Clone)")
+            {
+                type = 12;
+                
+            }
+            else if (objname == "PanPrefab(Clone)")
+            {
+                type = 1;
+            }
+            else if (objname == "BurgerPrefab(Clone)")
+            {
+                type = 11;
+            }
+        }
+
+        
+        
+        
+
         obj.transform.position = transform.position;
+
+        if (type == 13 && dropCode == 12)
+        {
+            if (obj.name == "PanPrefab(Clone)")
+            {
+                Destroy(obj);
+            }
+
+        }
 
         if (type == 1 && dropCode == 1)
         {
@@ -51,6 +89,11 @@ public class DropOff : MonoBehaviour
         {
             Destroy(obj);
             dropCode = this.GetComponentInChildren<Plate>().AddBun();
+        }
+
+        if (hasPickup)
+        {
+            pickup.Link(obj, type);
         }
     }
 
