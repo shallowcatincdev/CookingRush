@@ -10,7 +10,7 @@ public class DropOff : MonoBehaviour
     [SerializeField] Pickup pickup;
 
     GameObject[] dropedObjects;
-
+    Plate plate;
 
     // Start is called before the first frame update
     void Start()
@@ -65,7 +65,6 @@ public class DropOff : MonoBehaviour
 
         
         
-        
 
         obj.transform.position = transform.position;
 
@@ -95,10 +94,17 @@ public class DropOff : MonoBehaviour
             dropCode = 22;
         }
 
-        if (type == 12)
+        if (type == 12 || type == 11 || type == 13 || type == 14)
         {
-            Destroy(obj);
-            dropCode = this.GetComponentInChildren<Plate>().AddBun();
+            
+
+            plate = GetComponentInChildren<Plate>();
+            dropCode = plate.AddBun(obj, type);
+            if (type == 12)
+            {
+                Destroy(obj);
+            }
+            
         }
 
         if (hasPickup)
