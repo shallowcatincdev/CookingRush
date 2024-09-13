@@ -36,7 +36,7 @@ public class Burger : MonoBehaviour
             cookTime++;
             indicator[indnum].SetActive(true);
 
-            if (cookTime >= 300)
+            if (cookTime >= 400)
             {
                 cookTime = 0;
                 UpStage();

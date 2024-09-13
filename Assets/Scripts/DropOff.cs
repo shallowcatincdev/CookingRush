@@ -9,7 +9,7 @@ public class DropOff : MonoBehaviour
     [SerializeField] bool hasPickup;
     [SerializeField] Pickup pickup;
 
-    GameObject[] dropedObjects;
+    List<GameObject> dropedObjects;
     Plate plate;
 
     // Start is called before the first frame update
@@ -22,6 +22,11 @@ public class DropOff : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public List<GameObject> PlateThing()
+    {
+        return dropedObjects;
     }
 
     public void DropCode(int Code)
@@ -60,10 +65,11 @@ public class DropOff : MonoBehaviour
             else if (objname == "BurgerPrefab(Clone)")
             {
                 type = 11;
+                
             }
         }
 
-        
+        //dropedObjects.Add(obj);
         
 
         obj.transform.position = transform.position;
@@ -94,16 +100,15 @@ public class DropOff : MonoBehaviour
             dropCode = 22;
         }
 
-        if (type == 12 || type == 11 || type == 13 || type == 14)
+        if (type == 12)
         {
             
 
             plate = GetComponentInChildren<Plate>();
-            dropCode = plate.AddBun(obj, type);
-            if (type == 12)
-            {
-                Destroy(obj);
-            }
+            dropCode = plate.AddBun();
+
+            Destroy(obj);
+
             
         }
 
